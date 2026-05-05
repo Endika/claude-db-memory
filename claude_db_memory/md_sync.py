@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
-from claude_db_memory.config import index_path, md_dir, ensure_dirs
+from claude_db_memory.config import ensure_dirs, index_path, md_dir
 from claude_db_memory.models import Memory
-
 
 STRING_FIELDS = frozenset({"name", "type", "description", "created_at", "updated_at"})
 
@@ -46,13 +45,11 @@ def parse_md_file(path: Path) -> Memory:
         raw = raw.strip()
         try:
             fm[key] = json.loads(raw)
-        except json.JSONDecodeError:
+        except json.JSONDecodeError as err:
             if key in STRING_FIELDS:
                 fm[key] = raw
             else:
-                raise ValueError(
-                    f"{path}: field {key!r} is not valid JSON: {raw!r}"
-                )
+                raise ValueError(f"{path}: field {key!r} is not valid JSON: {raw!r}") from err
     return Memory(
         id=None,
         name=fm["name"],

@@ -3,14 +3,26 @@ from claude_db_memory.operations.search import main
 
 
 def seed():
-    add_main({"name": "feedback_commits", "type": "feedback",
-              "description": "Never run git writes",
-              "body": "User runs git operations themselves",
-              "tags": ["git"], "project": None})
-    add_main({"name": "project_tramita", "type": "project",
-              "description": "Tramita lives in tramita-web",
-              "body": "Frontend module is in tramita-web repo",
-              "tags": ["frontend"], "project": "tramita"})
+    add_main(
+        {
+            "name": "feedback_commits",
+            "type": "feedback",
+            "description": "Never run git writes",
+            "body": "User runs git operations themselves",
+            "tags": ["git"],
+            "project": None,
+        }
+    )
+    add_main(
+        {
+            "name": "project_tramita",
+            "type": "project",
+            "description": "Tramita lives in tramita-web",
+            "body": "Frontend module is in tramita-web repo",
+            "tags": ["frontend"],
+            "project": "tramita",
+        }
+    )
 
 
 def test_search_finds_by_body_term(memory_dir):

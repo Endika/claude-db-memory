@@ -1,18 +1,33 @@
 """MCP server entry point. Exposes claude_db_memory operations as MCP tools."""
+
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any
 
 from mcp.server.fastmcp import FastMCP
 
 from claude_db_memory.operations import (
     add as add_op,
+)
+from claude_db_memory.operations import (
     delete as delete_op,
+)
+from claude_db_memory.operations import (
     get as get_op,
+)
+from claude_db_memory.operations import (
     list_ as list_op,
+)
+from claude_db_memory.operations import (
     reindex as reindex_op,
+)
+from claude_db_memory.operations import (
     search as search_op,
+)
+from claude_db_memory.operations import (
     update as update_op,
+)
+from claude_db_memory.operations import (
     verify as verify_op,
 )
 
@@ -21,23 +36,40 @@ app = FastMCP("claude-db-memory")
 
 @app.tool()
 def tool_add_memory(
-    name: str, type: str, description: str, body: str,
-    tags: Optional[list[str]] = None, project: Optional[str] = None,
+    name: str,
+    type: str,
+    description: str,
+    body: str,
+    tags: list[str] | None = None,
+    project: str | None = None,
 ) -> dict[str, Any]:
-    return add_op.main({
-        "name": name, "type": type, "description": description, "body": body,
-        "tags": tags or [], "project": project,
-    })
+    return add_op.main(
+        {
+            "name": name,
+            "type": type,
+            "description": description,
+            "body": body,
+            "tags": tags or [],
+            "project": project,
+        }
+    )
 
 
 @app.tool()
 def tool_search_memory(
-    query: str, type: Optional[str] = None,
-    project: Optional[str] = None, limit: int = 10,
+    query: str,
+    type: str | None = None,
+    project: str | None = None,
+    limit: int = 10,
 ) -> dict[str, Any]:
-    return search_op.main({
-        "query": query, "type": type, "project": project, "limit": limit,
-    })
+    return search_op.main(
+        {
+            "query": query,
+            "type": type,
+            "project": project,
+            "limit": limit,
+        }
+    )
 
 
 @app.tool()
@@ -57,12 +89,19 @@ def tool_delete_memory(id_or_name: str) -> dict[str, Any]:
 
 @app.tool()
 def tool_list_memories(
-    type: Optional[str] = None, project: Optional[str] = None,
-    limit: int = 20, offset: int = 0,
+    type: str | None = None,
+    project: str | None = None,
+    limit: int = 20,
+    offset: int = 0,
 ) -> dict[str, Any]:
-    return list_op.main({
-        "type": type, "project": project, "limit": limit, "offset": offset,
-    })
+    return list_op.main(
+        {
+            "type": type,
+            "project": project,
+            "limit": limit,
+            "offset": offset,
+        }
+    )
 
 
 @app.tool()

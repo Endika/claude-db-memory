@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from claude_db_memory import db
-from claude_db_memory.md_sync import write_md, regenerate_index
+from claude_db_memory.md_sync import regenerate_index, write_md
 
 
 def main(args: dict[str, Any]) -> dict[str, Any]:

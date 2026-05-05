@@ -14,7 +14,7 @@ def main(args: dict[str, Any]) -> dict[str, Any]:
         m = db.get_by_id(conn, int(key))
     if m is None:
         m = db.get_by_name(conn, key)
-    if m is None:
+    if m is None or m.id is None:
         raise KeyError(f"Memory not found: {key}")
     db.delete_memory(conn, m.id)
     delete_md(m.name)

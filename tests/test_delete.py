@@ -6,8 +6,9 @@ from claude_db_memory.operations.delete import main
 
 
 def test_delete_removes_row_and_md(memory_dir):
-    add_main({"name": "d1", "type": "note", "description": "d", "body": "b",
-              "tags": [], "project": None})
+    add_main(
+        {"name": "d1", "type": "note", "description": "d", "body": "b", "tags": [], "project": None}
+    )
     md = md_dir() / "d1.md"
     assert md.exists()
     res = main({"id_or_name": "d1"})

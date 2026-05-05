@@ -71,8 +71,11 @@ Override with `CLAUDE_DB_MEMORY_DIR=/path/to/dir` for a global memory shared acr
 ## Development
 
 ```bash
-pip install -e ".[dev]"
-pytest
+make install        # pip install -e ".[dev]"
+make check          # lint + type-check + tests
+make format         # auto-format (ruff)
+make test           # pytest only
+make test-cov       # pytest with coverage
 ```
 
 ## License

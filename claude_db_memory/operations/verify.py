@@ -21,10 +21,12 @@ def main(args: dict[str, Any]) -> dict[str, Any]:
             drift.append(name)
             continue
         row = rows[name]
-        if (row.description != file_mem.description
-                or row.body.strip() != file_mem.body.strip()
-                or row.type != file_mem.type
-                or row.tags != file_mem.tags
-                or row.project != file_mem.project):
+        if (
+            row.description != file_mem.description
+            or row.body.strip() != file_mem.body.strip()
+            or row.type != file_mem.type
+            or row.tags != file_mem.tags
+            or row.project != file_mem.project
+        ):
             drift.append(name)
     return {"orphan_rows": orphan_rows, "orphan_files": orphan_files, "drift": sorted(drift)}

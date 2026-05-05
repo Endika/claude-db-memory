@@ -31,9 +31,13 @@ def main(args: dict[str, Any]) -> dict[str, Any]:
     rows = conn.execute(sql, params).fetchall()
     items = [
         {
-            "id": r["id"], "name": r["name"], "type": r["type"],
-            "description": r["description"], "project": r["project"],
-            "snippet": r["snippet"], "score": r["score"],
+            "id": r["id"],
+            "name": r["name"],
+            "type": r["type"],
+            "description": r["description"],
+            "project": r["project"],
+            "snippet": r["snippet"],
+            "score": r["score"],
         }
         for r in rows
     ]

@@ -3,12 +3,36 @@ from claude_db_memory.operations.list_ import main
 
 
 def seed(memory_dir):
-    add_main({"name": "fb1", "type": "feedback", "description": "d", "body": "b",
-              "tags": [], "project": "p1"})
-    add_main({"name": "fb2", "type": "feedback", "description": "d", "body": "b",
-              "tags": [], "project": "p2"})
-    add_main({"name": "pr1", "type": "project", "description": "d", "body": "b",
-              "tags": [], "project": "p1"})
+    add_main(
+        {
+            "name": "fb1",
+            "type": "feedback",
+            "description": "d",
+            "body": "b",
+            "tags": [],
+            "project": "p1",
+        }
+    )
+    add_main(
+        {
+            "name": "fb2",
+            "type": "feedback",
+            "description": "d",
+            "body": "b",
+            "tags": [],
+            "project": "p2",
+        }
+    )
+    add_main(
+        {
+            "name": "pr1",
+            "type": "project",
+            "description": "d",
+            "body": "b",
+            "tags": [],
+            "project": "p1",
+        }
+    )
 
 
 def test_list_all(memory_dir):

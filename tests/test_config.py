@@ -1,7 +1,6 @@
-import os
 from pathlib import Path
 
-from claude_db_memory.config import resolve_memory_dir, db_path, md_dir, index_path
+from claude_db_memory.config import db_path, index_path, md_dir, resolve_memory_dir
 
 
 def test_resolve_memory_dir_uses_env_var(monkeypatch, tmp_path):

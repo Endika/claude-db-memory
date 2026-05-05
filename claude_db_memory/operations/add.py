@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 from claude_db_memory import db
-from claude_db_memory.md_sync import write_md, regenerate_index
+from claude_db_memory.md_sync import regenerate_index, write_md
 from claude_db_memory.models import Memory
 
 

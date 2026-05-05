@@ -1,6 +1,6 @@
 import pytest
 
-from claude_db_memory.models import Memory, VALID_TYPES, validate_name, validate_type
+from claude_db_memory.models import VALID_TYPES, Memory, validate_name, validate_type
 
 
 def test_memory_dataclass_minimal():

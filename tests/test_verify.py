@@ -4,8 +4,9 @@ from claude_db_memory.operations.verify import main
 
 
 def test_verify_clean(memory_dir):
-    add_main({"name": "v1", "type": "note", "description": "d", "body": "b",
-              "tags": [], "project": None})
+    add_main(
+        {"name": "v1", "type": "note", "description": "d", "body": "b", "tags": [], "project": None}
+    )
     res = main({})
     assert res["orphan_rows"] == []
     assert res["orphan_files"] == []
@@ -13,8 +14,9 @@ def test_verify_clean(memory_dir):
 
 
 def test_verify_detects_orphan_row(memory_dir):
-    add_main({"name": "v1", "type": "note", "description": "d", "body": "b",
-              "tags": [], "project": None})
+    add_main(
+        {"name": "v1", "type": "note", "description": "d", "body": "b", "tags": [], "project": None}
+    )
     (md_dir() / "v1.md").unlink()
     res = main({})
     assert "v1" in res["orphan_rows"]
@@ -32,8 +34,16 @@ def test_verify_detects_orphan_file(memory_dir):
 
 
 def test_verify_detects_drift(memory_dir):
-    add_main({"name": "v1", "type": "note", "description": "old", "body": "b",
-              "tags": [], "project": None})
+    add_main(
+        {
+            "name": "v1",
+            "type": "note",
+            "description": "old",
+            "body": "b",
+            "tags": [],
+            "project": None,
+        }
+    )
     md = md_dir() / "v1.md"
     md.write_text(md.read_text().replace("old", "changed"))
     res = main({})

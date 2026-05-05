@@ -6,13 +6,29 @@ import sys
 
 from claude_db_memory.operations import (
     add as add_op,
+)
+from claude_db_memory.operations import (
     delete as delete_op,
+)
+from claude_db_memory.operations import (
     export as export_op,
+)
+from claude_db_memory.operations import (
     get as get_op,
+)
+from claude_db_memory.operations import (
     list_ as list_op,
+)
+from claude_db_memory.operations import (
     reindex as reindex_op,
+)
+from claude_db_memory.operations import (
     search as search_op,
+)
+from claude_db_memory.operations import (
     update as update_op,
+)
+from claude_db_memory.operations import (
     verify as verify_op,
 )
 
@@ -83,25 +99,38 @@ def build_parser() -> argparse.ArgumentParser:
 
 def _dispatch(ns: argparse.Namespace) -> dict:
     if ns.cmd == "add":
-        return add_op.main({
-            "name": ns.name, "type": ns.type,
-            "description": ns.description, "body": ns.body,
-            "tags": _parse_tags(ns.tags), "project": ns.project,
-        })
+        return add_op.main(
+            {
+                "name": ns.name,
+                "type": ns.type,
+                "description": ns.description,
+                "body": ns.body,
+                "tags": _parse_tags(ns.tags),
+                "project": ns.project,
+            }
+        )
     if ns.cmd == "get":
         return get_op.main({"id_or_name": ns.id_or_name})
     if ns.cmd == "list":
-        return list_op.main({
-            "type": ns.type, "project": ns.project,
-            "limit": ns.limit, "offset": ns.offset,
-        })
+        return list_op.main(
+            {
+                "type": ns.type,
+                "project": ns.project,
+                "limit": ns.limit,
+                "offset": ns.offset,
+            }
+        )
     if ns.cmd == "delete":
         return delete_op.main({"id_or_name": ns.id_or_name})
     if ns.cmd == "search":
-        return search_op.main({
-            "query": ns.query, "type": ns.type,
-            "project": ns.project, "limit": ns.limit,
-        })
+        return search_op.main(
+            {
+                "query": ns.query,
+                "type": ns.type,
+                "project": ns.project,
+                "limit": ns.limit,
+            }
+        )
     if ns.cmd == "update":
         fields: dict = {}
         for k in ("description", "body", "project", "type"):

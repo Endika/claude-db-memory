@@ -1,23 +1,26 @@
-from pathlib import Path
-
 import pytest
 
 from claude_db_memory.md_sync import (
-    serialize_memory,
-    parse_md_file,
-    write_md,
     delete_md,
+    parse_md_file,
     regenerate_index,
+    serialize_memory,
+    write_md,
 )
 from claude_db_memory.models import Memory
 
 
 def make_memory(name="m1", type_="feedback") -> Memory:
     return Memory(
-        id=1, name=name, type=type_,
-        description=f"desc for {name}", body="body content",
-        tags=["a", "b"], project=None,
-        created_at="2026-05-05T10:00:00", updated_at="2026-05-05T10:00:00",
+        id=1,
+        name=name,
+        type=type_,
+        description=f"desc for {name}",
+        body="body content",
+        tags=["a", "b"],
+        project=None,
+        created_at="2026-05-05T10:00:00",
+        updated_at="2026-05-05T10:00:00",
         source_file=f"memories/{name}.md",
     )
 
@@ -65,7 +68,7 @@ def test_regenerate_index_groups_by_type(memory_dir):
 
 
 def test_parse_md_file_handles_missing_optional_fields(tmp_path):
-    content = '''---
+    content = """---
 name: simple
 type: note
 description: just a note
@@ -76,7 +79,7 @@ updated_at: 2026-05-05T10:00:00
 ---
 
 body
-'''
+"""
     f = tmp_path / "simple.md"
     f.write_text(content)
     m = parse_md_file(f)
@@ -93,13 +96,13 @@ def test_parse_md_file_missing_frontmatter_delimiter(tmp_path):
 
 def test_parse_md_file_unterminated_frontmatter(tmp_path):
     f = tmp_path / "broken.md"
-    f.write_text("---\nname: \"x\"\nno closing delimiter\n")
+    f.write_text('---\nname: "x"\nno closing delimiter\n')
     with pytest.raises(ValueError, match="unterminated frontmatter"):
         parse_md_file(f)
 
 
 def test_parse_md_file_rejects_yaml_list_for_tags(tmp_path):
-    content = '''---
+    content = """---
 name: "x"
 type: "note"
 description: "d"
@@ -110,7 +113,7 @@ updated_at: "2026-05-05T10:00:00"
 ---
 
 body
-'''
+"""
     f = tmp_path / "bad.md"
     f.write_text(content)
     with pytest.raises(ValueError, match="not valid JSON"):

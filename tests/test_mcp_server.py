@@ -16,8 +16,12 @@ def test_mcp_module_exposes_tool_handlers(memory_dir):
 def test_tool_add_then_search(memory_dir):
     mod = importlib.import_module("mcp_server")
     mod.tool_add_memory(
-        name="m1", type="note", description="findable text", body="b",
-        tags=[], project=None,
+        name="m1",
+        type="note",
+        description="findable text",
+        body="b",
+        tags=[],
+        project=None,
     )
     res = mod.tool_search_memory(query="findable")
     assert any(item["name"] == "m1" for item in res["items"])

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
-from typing import Any, Optional
+from typing import Any
 
 from claude_db_memory.config import db_path, ensure_dirs
 from claude_db_memory.models import Memory, validate_name, validate_type
@@ -112,19 +112,36 @@ def insert_memory(conn: sqlite3.Connection, m: Memory) -> int:
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
-            m.name, m.type, m.description, m.body,
-            json.dumps(m.tags), m.project,
-            m.created_at, m.updated_at, m.source_file,
+            m.name,
+            m.type,
+            m.description,
+            m.body,
+            json.dumps(m.tags),
+            m.project,
+            m.created_at,
+            m.updated_at,
+            m.source_file,
         ),
     )
     conn.commit()
+    if cur.lastrowid is None:
+        raise RuntimeError("INSERT did not produce a lastrowid")
     return int(cur.lastrowid)
 
 
 def update_memory(conn: sqlite3.Connection, id_: int, fields: dict[str, Any]) -> None:
     if not fields:
         return
-    allowed = {"name", "type", "description", "body", "tags", "project", "updated_at", "source_file"}
+    allowed = {
+        "name",
+        "type",
+        "description",
+        "body",
+        "tags",
+        "project",
+        "updated_at",
+        "source_file",
+    }
     bad = set(fields) - allowed
     if bad:
         raise ValueError(f"Cannot update fields: {sorted(bad)}")
@@ -145,24 +162,25 @@ def delete_memory(conn: sqlite3.Connection, id_: int) -> None:
     conn.commit()
 
 
-def get_by_name(conn: sqlite3.Connection, name: str) -> Optional[Memory]:
+def get_by_name(conn: sqlite3.Connection, name: str) -> Memory | None:
     row = conn.execute("SELECT * FROM memories WHERE name = ?", (name,)).fetchone()
     return _row_to_memory(row) if row else None
 
 
-def get_by_id(conn: sqlite3.Connection, id_: int) -> Optional[Memory]:
+def get_by_id(conn: sqlite3.Connection, id_: int) -> Memory | None:
     row = conn.execute("SELECT * FROM memories WHERE id = ?", (id_,)).fetchone()
     return _row_to_memory(row) if row else None
 
 
 def list_all(
     conn: sqlite3.Connection,
-    type_: Optional[str] = None,
-    project: Optional[str] = None,
+    type_: str | None = None,
+    project: str | None = None,
     limit: int = 1000,
     offset: int = 0,
 ) -> list[Memory]:
-    clauses, params = [], []
+    clauses: list[str] = []
+    params: list[Any] = []
     if type_:
         clauses.append("type = ?")
         params.append(type_)

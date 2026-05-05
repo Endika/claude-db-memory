@@ -1,25 +1,30 @@
-import json
 import sqlite3
 
 from claude_db_memory.db import (
     connect,
+    delete_memory,
+    get_by_id,
+    get_by_name,
     init_schema,
     insert_memory,
-    update_memory,
-    delete_memory,
-    get_by_name,
-    get_by_id,
     list_all,
     schema_version,
+    update_memory,
 )
 from claude_db_memory.models import Memory
 
 
 def make_memory(name="m1", type_="feedback") -> Memory:
     return Memory(
-        id=None, name=name, type=type_, description="d", body="b",
-        tags=["t1"], project=None,
-        created_at="2026-05-05T10:00:00", updated_at="2026-05-05T10:00:00",
+        id=None,
+        name=name,
+        type=type_,
+        description="d",
+        body="b",
+        tags=["t1"],
+        project=None,
+        created_at="2026-05-05T10:00:00",
+        updated_at="2026-05-05T10:00:00",
         source_file=f"memories/{name}.md",
     )
 
