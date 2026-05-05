@@ -14,6 +14,7 @@ test-cov:
 
 lint:
 	$(PY) -m ruff check claude_db_memory tests mcp_server.py
+	$(PY) -m ruff format --check claude_db_memory tests mcp_server.py
 
 format:
 	$(PY) -m ruff format claude_db_memory tests mcp_server.py

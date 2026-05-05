@@ -98,7 +98,7 @@ GitHub Actions runs three parallel jobs on every push and PR:
 
 - **lint** -- `ruff check` + `ruff format --check`
 - **type-check** -- `mypy`
-- **test** -- `pytest` on Python 3.9, 3.10, 3.11, 3.12
+- **test** -- `pytest` on Python 3.10, 3.11, 3.12
 
 ## License
 
