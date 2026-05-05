@@ -13,13 +13,13 @@ Claude Code's native memory stores entries as Markdown files indexed by `MEMORY.
 ### As a Claude Code plugin
 
 ```bash
-/plugin install github:<your-user>/claude-db-memory
+/plugin install github:Endika/claude-db-memory
 ```
 
 ### Manual
 
 ```bash
-git clone https://github.com/<your-user>/claude-db-memory ~/.claude/plugins/claude-db-memory
+git clone https://github.com/Endika/claude-db-memory ~/.claude/plugins/claude-db-memory
 cd ~/.claude/plugins/claude-db-memory
 pip install -e .
 ```
