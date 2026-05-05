@@ -69,9 +69,9 @@ def test_index_regeneration_does_not_truncate(memory_dir, monkeypatch):
         {"name": "x1", "type": "note", "description": "d", "body": "b", "tags": [], "project": None}
     )
 
-    assert spy.last_kwargs.get(
-        "limit"
-    ), "add.py must pass an explicit limit to list_all when regenerating the index"
-    assert (
-        spy.last_kwargs["limit"] >= 10**6
-    ), f"limit must be effectively unbounded; got {spy.last_kwargs['limit']}"
+    assert spy.last_kwargs.get("limit"), (
+        "add.py must pass an explicit limit to list_all when regenerating the index"
+    )
+    assert spy.last_kwargs["limit"] >= 10**6, (
+        f"limit must be effectively unbounded; got {spy.last_kwargs['limit']}"
+    )
