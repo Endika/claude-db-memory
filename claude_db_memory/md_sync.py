@@ -8,6 +8,9 @@ from claude_db_memory.config import index_path, md_dir, ensure_dirs
 from claude_db_memory.models import Memory
 
 
+STRING_FIELDS = frozenset({"name", "type", "description", "created_at", "updated_at"})
+
+
 def serialize_memory(m: Memory) -> str:
     fm = {
         "name": m.name,
@@ -39,11 +42,17 @@ def parse_md_file(path: Path) -> Memory:
         if not line.strip():
             continue
         key, _, raw = line.partition(":")
+        key = key.strip()
         raw = raw.strip()
         try:
-            fm[key.strip()] = json.loads(raw)
+            fm[key] = json.loads(raw)
         except json.JSONDecodeError:
-            fm[key.strip()] = raw
+            if key in STRING_FIELDS:
+                fm[key] = raw
+            else:
+                raise ValueError(
+                    f"{path}: field {key!r} is not valid JSON: {raw!r}"
+                )
     return Memory(
         id=None,
         name=fm["name"],

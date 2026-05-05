@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pytest
+
 from claude_db_memory.md_sync import (
     serialize_memory,
     parse_md_file,
@@ -80,3 +82,36 @@ body
     m = parse_md_file(f)
     assert m.tags == []
     assert m.project is None
+
+
+def test_parse_md_file_missing_frontmatter_delimiter(tmp_path):
+    f = tmp_path / "broken.md"
+    f.write_text("no frontmatter here\nbody only\n")
+    with pytest.raises(ValueError, match="missing frontmatter delimiter"):
+        parse_md_file(f)
+
+
+def test_parse_md_file_unterminated_frontmatter(tmp_path):
+    f = tmp_path / "broken.md"
+    f.write_text("---\nname: \"x\"\nno closing delimiter\n")
+    with pytest.raises(ValueError, match="unterminated frontmatter"):
+        parse_md_file(f)
+
+
+def test_parse_md_file_rejects_yaml_list_for_tags(tmp_path):
+    content = '''---
+name: "x"
+type: "note"
+description: "d"
+tags: [a, b]
+project: null
+created_at: "2026-05-05T10:00:00"
+updated_at: "2026-05-05T10:00:00"
+---
+
+body
+'''
+    f = tmp_path / "bad.md"
+    f.write_text(content)
+    with pytest.raises(ValueError, match="not valid JSON"):
+        parse_md_file(f)
