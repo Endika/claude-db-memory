@@ -78,6 +78,28 @@ make test           # pytest only
 make test-cov       # pytest with coverage
 ```
 
+## Release process
+
+This project uses [Release Please](https://github.com/googleapis/release-please) to automate versioning and releases based on [Conventional Commits](https://www.conventionalcommits.org/).
+
+- Every commit on `main` triggers Release Please.
+- It maintains a release PR that aggregates pending changes into `CHANGELOG.md` and bumps the version in `pyproject.toml`.
+- Merging the release PR creates a tag (`vX.Y.Z`) and a GitHub release.
+
+Conventional commit prefixes:
+- `feat:` -> minor version bump
+- `fix:` -> patch version bump
+- `feat!:` / `BREAKING CHANGE:` -> major version bump
+- `chore:`, `docs:`, `ci:`, `refactor:`, `test:` -> no version bump (still appear in changelog under their section)
+
+## Continuous integration
+
+GitHub Actions runs three parallel jobs on every push and PR:
+
+- **lint** -- `ruff check` + `ruff format --check`
+- **type-check** -- `mypy`
+- **test** -- `pytest` on Python 3.9, 3.10, 3.11, 3.12
+
 ## License
 
 MIT.
