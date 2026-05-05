@@ -8,6 +8,22 @@ Claude Code's native memory stores entries as Markdown files indexed by `MEMORY.
 
 `claude-db-memory` keeps the auto-loaded `MEMORY.md` compatibility but moves the source of truth to a local SQLite database with FTS5 full-text search. Markdown files become a versionable backup layer that can recover the database at any time.
 
+## When does this plugin make sense?
+
+Not always. The plugin adds a small fixed cost per session (~600 tokens of MCP tool schemas). That cost only pays off once you accumulate enough memories that the native system starts hurting you.
+
+| Memory count | Native Claude Code behavior | With `claude-db-memory` | Worth installing? |
+|---|---|---|---|
+| **1–20** | Works fine, `MEMORY.md` fits comfortably | Adds ~600 tokens of overhead per session | ❌ Overkill |
+| **20–80** | Still works, `MEMORY.md` getting long | Search + filters start adding value | 🟡 Break-even |
+| **80–200** | `MEMORY.md` near the auto-load limit | Compact auto-index, real search | ✅ Worth it |
+| **200+** | **Silently truncates** — memories beyond line 200 stop loading into context | No ceiling, FTS5 search, filters by type/project/tags | ✅ Strongly recommended |
+| **1000+** | Catastrophic — most memories invisible to Claude | Same — query and retrieval scale to thousands | ✅ Required |
+
+The headline value isn't ahorro of tokens at small scale — it's **removing the silent truncation ceiling** of the native system. Once you cross ~200 lines in `MEMORY.md`, the native system stops loading the rest, and you don't get told. This plugin keeps every memory addressable forever, with full-text search.
+
+If you have fewer than ~50 memories today and don't expect to grow, **the native system is fine** and you don't need this. Install it when (or just before) you cross 100.
+
 ## Install
 
 ### As a Claude Code plugin
