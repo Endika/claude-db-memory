@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from typing import Any
 
 from claude_db_memory import db
 from claude_db_memory.md_sync import write_md, regenerate_index
 from claude_db_memory.models import Memory
 
 
-def main(args: dict) -> dict:
+def main(args: dict[str, Any]) -> dict[str, Any]:
     now = datetime.now(timezone.utc).isoformat(timespec="seconds")
     m = Memory(
         id=None,
@@ -22,7 +23,6 @@ def main(args: dict) -> dict:
         source_file=f"memories/{args['name']}.md",
     )
     conn = db.connect()
-    db.init_schema(conn)
     new_id = db.insert_memory(conn, m)
     m.id = new_id
     write_md(m)

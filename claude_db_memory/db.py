@@ -56,11 +56,18 @@ DDL = [
 ]
 
 
+_schema_initialized: dict[str, bool] = {}
+
+
 def connect() -> sqlite3.Connection:
     ensure_dirs()
-    conn = sqlite3.connect(db_path())
+    path_key = str(db_path())
+    conn = sqlite3.connect(path_key)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
+    if not _schema_initialized.get(path_key):
+        init_schema(conn)
+        _schema_initialized[path_key] = True
     return conn
 
 
