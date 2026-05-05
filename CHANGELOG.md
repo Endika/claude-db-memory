@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/Endika/claude-db-memory/compare/v0.3.0...v0.3.1) (2026-05-05)
+
+
+### Bug Fixes
+
+* **plugin:** use github source type for wider Claude Code compatibility ([3d7aa23](https://github.com/Endika/claude-db-memory/commit/3d7aa234fc51251a15ad148ed5b155e447dce0e9))
+
 ## [0.3.0](https://github.com/Endika/claude-db-memory/compare/v0.2.0...v0.3.0) (2026-05-05)
 
 
