@@ -45,31 +45,194 @@ Claude Code reads `.claude-plugin/plugin.json` and registers the MCP server auto
 ## CLI
 
 ```bash
-memory add --type feedback --name commits --description "..." --body "..."
-memory search "tramita"
+# Save a coding preference Claude should respect across sessions
+memory add --type feedback --name typescript_strict \
+    --description "Always use TypeScript strict mode; reject 'any'" \
+    --body "Force strict: true in tsconfig. Reject 'as any' casts; use 'unknown' + type guards instead." \
+    --tags "typescript,types"
+
+# Search across all memories (full-text, FTS5)
+memory search "strict mode"
+
+# Filter list by type
 memory list --type feedback
-memory get commits
-memory update commits --description "new"
-memory delete commits
-memory reindex
-memory verify
-memory export
+
+# Look up a specific memory
+memory get typescript_strict
+
+# Update a memory
+memory update typescript_strict --description "Strict TypeScript only; document any escape hatches"
+
+# Delete one
+memory delete typescript_strict
+
+# Maintenance
+memory reindex     # rebuild SQLite from .md files (recovery)
+memory verify      # detect drift between .md and DB
+memory export      # regenerate .md backups from DB
 ```
 
 Add `--json` to any command for machine-readable output.
 
 ## MCP tools
 
-The plugin exposes these tools to Claude Code:
+When installed as a plugin, Claude Code can call these tools directly during a conversation:
 
-- `tool_add_memory`
-- `tool_search_memory`
-- `tool_get_memory`
-- `tool_update_memory`
-- `tool_delete_memory`
-- `tool_list_memories`
-- `tool_reindex`
-- `tool_verify`
+| Tool | What it does |
+|---|---|
+| `tool_add_memory` | Persist a new memory with name, type, description, body, tags, project |
+| `tool_search_memory` | Full-text search with optional `type` / `project` filters |
+| `tool_get_memory` | Fetch one memory by id or name |
+| `tool_update_memory` | Modify fields of an existing memory |
+| `tool_delete_memory` | Remove a memory from DB and `.md` backup |
+| `tool_list_memories` | Paginated list, filterable by type and project |
+| `tool_reindex` | Rebuild SQLite from `.md` backup |
+| `tool_verify` | Report drift between SQLite and `.md` files |
+
+## How it works
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant You
+    participant Claude as Claude Code
+    participant MCP as claude-db-memory<br/>(MCP server)
+    participant DB as memory.db<br/>(SQLite + FTS5)
+    participant MD as memories/*.md<br/>(backup)
+
+    You->>Claude: "Save that we use hexagonal architecture here"
+    Claude->>MCP: tool_add_memory(...)
+    MCP->>DB: INSERT
+    MCP->>MD: write .md backup
+    MCP->>Claude: {id: 1, name: "hexagonal_arch"}
+    Claude->>You: "Saved."
+
+    Note over You,MD: --- Days later, fresh session ---
+
+    You->>Claude: "Add a new use case for invoice creation"
+    Claude->>MCP: tool_search_memory("architecture")
+    MCP->>DB: FTS5 MATCH
+    DB->>MCP: matching memories + snippets
+    MCP->>Claude: domain rules, layer boundaries
+    Claude->>You: code that respects hexagonal layout
+```
+
+## Before vs after
+
+| Without the plugin | With the plugin |
+|---|---|
+| You re-explain your repo conventions every session. | Claude knows them from memory and applies them automatically. |
+| `MEMORY.md` grows past 200 lines and silently truncates. | Index stays compact; full content always searchable. |
+| No way to filter "all feedback about testing". | `memory list --type feedback --tags testing`. |
+| Cross-session continuity is lost when conversation history rotates. | Persistent context survives indefinitely. |
+| Knowledge lives in your head; new teammates can't import yours. | `.md` backups can be shared via git for team-wide context. |
+
+## Real-world use cases
+
+Five concrete scenarios mapped to the five memory types. Each row shows what you say, how it gets stored, and how Claude behaves later.
+
+---
+
+### 🏛️ Project — codify repo conventions
+
+> 💬 **You say:** *"Save that this repo uses hexagonal architecture: domain in `src/domain/` with zero external imports, adapters under `src/adapters/`, use cases under `src/application/`."*
+
+```yaml
+type: project
+name: hexagonal_architecture
+description: Repo uses hexagonal architecture; domain layer is pure
+tags: [architecture, ddd]
+project: my-service
+```
+
+> ✅ **Later:** when you ask "add a new use case for invoice creation", Claude searches memories tagged `architecture`, sees the rules, and produces code that goes in the right layers without you re-stating them.
+
+---
+
+### 🎨 User — personal Claude tuning
+
+> 💬 **You say:** *"Remember that I want concise answers without preamble, and you don't need to explain what the code does unless I ask."*
+
+```yaml
+type: user
+name: response_style_terse
+description: Prefer concise responses, no preamble
+tags: [tone, preferences]
+```
+
+> ✅ **Later:** every session opens with this loaded into context. Claude skips "Great question!" filler from message 1.
+
+---
+
+### ⚠️ Feedback — never repeat a past mistake
+
+> 💬 **You say:** *"Never mock the DB in integration tests for this repo. We got burned last quarter — a mocked test passed in CI but the prod migration broke because column types diverged."*
+
+```yaml
+type: feedback
+name: never_mock_db_in_integration
+description: DB mocks caused a prod migration failure last quarter
+tags: [testing, migrations, incident]
+project: my-service
+```
+
+> ✅ **Later:** when you ask "add an integration test for the orders table", Claude proposes spinning up a real Postgres in docker-compose instead of mocking, and explains why (citing your past incident).
+
+---
+
+### 🔗 Reference — point Claude to the right place
+
+> 💬 **You say:** *"The auth service in our org lives at `services/auth-platform`, not in the main app repo. When I ask about authentication, that's the actual code."*
+
+```yaml
+type: reference
+name: auth_service_location
+description: Auth lives in services/auth-platform, not the main app
+tags: [auth, architecture]
+```
+
+> ✅ **Later:** asking "how does login work?" makes Claude direct you to the right repo and read code from there, instead of grep'ing the wrong codebase.
+
+---
+
+### 📝 Note — operational knowledge
+
+> 💬 **You say:** *"Document the deploy procedure: merge to main → staging deploys → run smoke-test.sh → tag `release-YYYY-MM-DD` → prod deploys → watch grafana for 10 min."*
+
+```yaml
+type: note
+name: deploy_workflow
+description: Production deploy procedure for this service
+tags: [deploy, ops, runbook]
+project: my-service
+```
+
+> ✅ **Later:** you say "deploy v1.4.2" and Claude walks you through *your* exact procedure, not a generic one. Plus you can pipe it: `memory get deploy_workflow --json | jq -r .body` for a printable runbook.
+
+---
+
+## What the auto-generated index looks like
+
+Every `add` / `update` / `delete` regenerates `MEMORY.md` (which Claude Code auto-loads at session start). It stays compact regardless of total memory count:
+
+```markdown
+# Memory Index
+
+## feedback
+- [never_mock_db_in_integration](memories/never_mock_db_in_integration.md) — DB mocks caused a prod migration failure last quarter
+- [response_style_terse](memories/response_style_terse.md) — Prefer concise responses, no preamble
+
+## note
+- [deploy_workflow](memories/deploy_workflow.md) — Production deploy procedure for this service
+
+## project
+- [hexagonal_architecture](memories/hexagonal_architecture.md) — Repo uses hexagonal architecture; domain layer is pure
+
+## reference
+- [auth_service_location](memories/auth_service_location.md) — Auth lives in services/auth-platform, not the main app
+```
+
+One line per memory, grouped by type. At 500 memories it's still ~510 lines instead of thousands — Claude Code auto-loads it without truncation, and the full body of each memory is fetched on demand via `tool_search_memory` or `tool_get_memory`.
 
 ## Storage
 
