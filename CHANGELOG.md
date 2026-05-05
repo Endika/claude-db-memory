@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.3](https://github.com/Endika/claude-db-memory/compare/v0.3.2...v0.3.3) (2026-05-05)
+
+
+### Documentation
+
+* replace YAML data blocks with runnable memory add commands ([79a2067](https://github.com/Endika/claude-db-memory/commit/79a2067d800ecbcfad091ce788d885682515a51b))
+
 ## [0.3.2](https://github.com/Endika/claude-db-memory/compare/v0.3.1...v0.3.2) (2026-05-05)
 
 

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "claude-db-memory"
-version = "0.3.2"
+version = "0.3.3"
 description = "SQLite-backed long-term memory for Claude Code with FTS5 search and Markdown backup"
 readme = "README.md"
 license = { text = "MIT" }
