@@ -48,3 +48,24 @@ def test_verify_detects_drift(memory_dir):
     md.write_text(md.read_text().replace("old", "changed"))
     res = main({})
     assert "v1" in res["drift"]
+
+
+def test_verify_fix_flag_returns_not_implemented_note(memory_dir):
+    add_main(
+        {"name": "v1", "type": "note", "description": "old", "body": "b", "tags": [], "project": None}
+    )
+    md = md_dir() / "v1.md"
+    md.write_text(md.read_text().replace("old", "changed"))
+    res = main({"fix": True})
+    assert "v1" in res["drift"]
+    assert res["fix_applied"] is False
+    assert "not yet implemented" in res["fix_note"]
+
+
+def test_verify_no_fix_flag_does_not_include_fix_note(memory_dir):
+    add_main(
+        {"name": "v1", "type": "note", "description": "d", "body": "b", "tags": [], "project": None}
+    )
+    res = main({})
+    assert "fix_note" not in res
+    assert "fix_applied" not in res

@@ -143,7 +143,7 @@ def _dispatch(ns: argparse.Namespace) -> dict:
     if ns.cmd == "reindex":
         return reindex_op.main({})
     if ns.cmd == "verify":
-        return verify_op.main({})
+        return verify_op.main({"fix": ns.fix})
     if ns.cmd == "export":
         return export_op.main({})
     raise SystemExit(2)

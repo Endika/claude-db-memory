@@ -45,3 +45,31 @@ def test_add_rejects_duplicate(memory_dir):
     except Exception:
         return
     raise AssertionError("expected duplicate to fail")
+
+
+def _make_spy(fn):
+    def spy(*args, **kwargs):
+        spy.last_args = args
+        spy.last_kwargs = kwargs
+        return fn(*args, **kwargs)
+
+    spy.last_args = ()
+    spy.last_kwargs = {}
+    return spy
+
+
+def test_index_regeneration_does_not_truncate(memory_dir, monkeypatch):
+    """Adding more than the default list_all limit (1000) must not truncate the index."""
+    from claude_db_memory import db as db_mod
+
+    spy = _make_spy(db_mod.list_all)
+    monkeypatch.setattr(db_mod, "list_all", spy)
+
+    main({"name": "x1", "type": "note", "description": "d", "body": "b", "tags": [], "project": None})
+
+    assert spy.last_kwargs.get("limit"), (
+        "add.py must pass an explicit limit to list_all when regenerating the index"
+    )
+    assert spy.last_kwargs["limit"] >= 10**6, (
+        f"limit must be effectively unbounded; got {spy.last_kwargs['limit']}"
+    )

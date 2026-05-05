@@ -21,5 +21,5 @@ def main(args: dict[str, Any]) -> dict[str, Any]:
             rebuilt += 1
         except Exception as exc:
             errors.append({"file": str(path), "error": str(exc)})
-    regenerate_index(db.list_all(conn))
+    regenerate_index(db.list_all(conn, limit=10**9))
     return {"rebuilt": rebuilt, "errors": errors}

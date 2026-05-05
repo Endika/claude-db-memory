@@ -29,4 +29,17 @@ def main(args: dict[str, Any]) -> dict[str, Any]:
             or row.project != file_mem.project
         ):
             drift.append(name)
-    return {"orphan_rows": orphan_rows, "orphan_files": orphan_files, "drift": sorted(drift)}
+    result: dict[str, Any] = {
+        "orphan_rows": orphan_rows,
+        "orphan_files": orphan_files,
+        "drift": sorted(drift),
+    }
+    if args.get("fix"):
+        result["fix_applied"] = False
+        result["fix_note"] = (
+            "Auto-fix is not yet implemented (planned for v0.2). "
+            "To resolve drift now: edit .md files to the desired state and run "
+            "`memory reindex`. To resolve orphan rows: run `memory export`. "
+            "To resolve orphan files: run `memory reindex`."
+        )
+    return result

@@ -12,3 +12,8 @@
 - Claude Code plugin manifest at `.claude-plugin/plugin.json`.
 - GitHub Actions CI on Python 3.9–3.12.
 - Developer tooling: Makefile with `install`, `test`, `lint`, `format`, `type-check`, `check`, `clean` targets. Ruff + mypy configured in `pyproject.toml`.
+- WAL journal mode and 5s busy timeout for safer concurrent CLI/MCP use.
+- 'verify --fix' flag accepted; reports "not yet implemented" with guidance until v0.2.
+
+### Fixed
+- Index-regeneration callers (add, update, delete, reindex) now pass an explicit unbounded limit to list_all so MEMORY.md never silently truncates past 1000 memories.

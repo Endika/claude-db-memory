@@ -18,5 +18,5 @@ def main(args: dict[str, Any]) -> dict[str, Any]:
         raise KeyError(f"Memory not found: {key}")
     db.delete_memory(conn, m.id)
     delete_md(m.name)
-    regenerate_index(db.list_all(conn))
+    regenerate_index(db.list_all(conn, limit=10**9))
     return {"deleted": True, "name": m.name}

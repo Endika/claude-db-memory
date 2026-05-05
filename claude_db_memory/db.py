@@ -65,6 +65,8 @@ def connect() -> sqlite3.Connection:
     conn = sqlite3.connect(path_key)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
+    conn.execute("PRAGMA journal_mode = WAL")
+    conn.execute("PRAGMA busy_timeout = 5000")
     if not _schema_initialized.get(path_key):
         init_schema(conn)
         _schema_initialized[path_key] = True

@@ -111,3 +111,11 @@ def test_fts_index_populated_on_insert(memory_dir):
     cur = conn.execute("SELECT name FROM memories_fts WHERE memories_fts MATCH 'm1'")
     rows = cur.fetchall()
     assert len(rows) == 1
+
+
+def test_connect_enables_wal_and_busy_timeout(memory_dir):
+    conn = connect()
+    journal_mode = conn.execute("PRAGMA journal_mode").fetchone()[0]
+    busy_timeout = conn.execute("PRAGMA busy_timeout").fetchone()[0]
+    assert journal_mode.lower() == "wal"
+    assert busy_timeout == 5000

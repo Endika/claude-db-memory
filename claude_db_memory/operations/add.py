@@ -26,5 +26,5 @@ def main(args: dict[str, Any]) -> dict[str, Any]:
     new_id = db.insert_memory(conn, m)
     m.id = new_id
     write_md(m)
-    regenerate_index(db.list_all(conn))
+    regenerate_index(db.list_all(conn, limit=10**9))
     return {"id": new_id, "name": m.name}

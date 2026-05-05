@@ -25,5 +25,5 @@ def main(args: dict[str, Any]) -> dict[str, Any]:
     if updated is None:
         raise RuntimeError(f"Memory disappeared after update: {key}")
     write_md(updated)
-    regenerate_index(db.list_all(conn))
+    regenerate_index(db.list_all(conn, limit=10**9))
     return asdict(updated)
