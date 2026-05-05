@@ -133,16 +133,25 @@ Five concrete scenarios mapped to the five memory types. Each row shows what you
 
 ---
 
+There are two ways to create memories: ask Claude in a session (he calls `tool_add_memory` for you) or run the CLI directly. Each scenario below shows both: what you'd say to Claude in natural language, and the equivalent CLI command you can copy-paste right now.
+
+---
+
 ### 🏛️ Project — codify repo conventions
 
-> 💬 **You say:** *"Save that this repo uses hexagonal architecture: domain in `src/domain/` with zero external imports, adapters under `src/adapters/`, use cases under `src/application/`."*
+> 💬 **In a Claude session:** *"Save that this repo uses hexagonal architecture: domain in `src/domain/` with zero external imports, adapters under `src/adapters/`, use cases under `src/application/`."*
 
-```yaml
-type: project
-name: hexagonal_architecture
-description: Repo uses hexagonal architecture; domain layer is pure
-tags: [architecture, ddd]
-project: my-service
+📟 **Or directly from the terminal:**
+
+```bash
+memory add --type project --name hexagonal_architecture \
+  --description "Repo uses hexagonal architecture; domain layer is pure" \
+  --body "Domain logic in src/domain/ with zero external imports.
+Adapters under src/adapters/. Use cases under src/application/.
+Never import infrastructure from domain. Tests for domain
+should not require any DB or HTTP." \
+  --tags "architecture,ddd" \
+  --project my-service
 ```
 
 > ✅ **Later:** when you ask "add a new use case for invoice creation", Claude searches memories tagged `architecture`, sees the rules, and produces code that goes in the right layers without you re-stating them.
@@ -151,13 +160,17 @@ project: my-service
 
 ### 🎨 User — personal Claude tuning
 
-> 💬 **You say:** *"Remember that I want concise answers without preamble, and you don't need to explain what the code does unless I ask."*
+> 💬 **In a Claude session:** *"Remember that I want concise answers without preamble, and you don't need to explain what the code does unless I ask."*
 
-```yaml
-type: user
-name: response_style_terse
-description: Prefer concise responses, no preamble
-tags: [tone, preferences]
+📟 **Or directly from the terminal:**
+
+```bash
+memory add --type user --name response_style_terse \
+  --description "Prefer concise responses, no preamble" \
+  --body "Default to terse answers. Skip 'Great question!' filler.
+Don't explain what code does unless explicitly asked.
+For exploratory questions, 2-3 sentences with a recommendation." \
+  --tags "tone,preferences"
 ```
 
 > ✅ **Later:** every session opens with this loaded into context. Claude skips "Great question!" filler from message 1.
@@ -166,14 +179,19 @@ tags: [tone, preferences]
 
 ### ⚠️ Feedback — never repeat a past mistake
 
-> 💬 **You say:** *"Never mock the DB in integration tests for this repo. We got burned last quarter — a mocked test passed in CI but the prod migration broke because column types diverged."*
+> 💬 **In a Claude session:** *"Never mock the DB in integration tests for this repo. We got burned last quarter — a mocked test passed in CI but the prod migration broke because column types diverged."*
 
-```yaml
-type: feedback
-name: never_mock_db_in_integration
-description: DB mocks caused a prod migration failure last quarter
-tags: [testing, migrations, incident]
-project: my-service
+📟 **Or directly from the terminal:**
+
+```bash
+memory add --type feedback --name never_mock_db_in_integration \
+  --description "DB mocks caused a prod migration failure last quarter" \
+  --body "Integration tests must hit a real PostgreSQL instance.
+A mocked test passed in CI but the prod migration broke because
+column types diverged. Use docker-compose with a real DB even
+if slower." \
+  --tags "testing,migrations,incident" \
+  --project my-service
 ```
 
 > ✅ **Later:** when you ask "add an integration test for the orders table", Claude proposes spinning up a real Postgres in docker-compose instead of mocking, and explains why (citing your past incident).
@@ -182,13 +200,18 @@ project: my-service
 
 ### 🔗 Reference — point Claude to the right place
 
-> 💬 **You say:** *"The auth service in our org lives at `services/auth-platform`, not in the main app repo. When I ask about authentication, that's the actual code."*
+> 💬 **In a Claude session:** *"The auth service in our org lives at `services/auth-platform`, not in the main app repo. When I ask about authentication, that's the actual code."*
 
-```yaml
-type: reference
-name: auth_service_location
-description: Auth lives in services/auth-platform, not the main app
-tags: [auth, architecture]
+📟 **Or directly from the terminal:**
+
+```bash
+memory add --type reference --name auth_service_location \
+  --description "Auth lives in services/auth-platform, not the main app" \
+  --body "When working on auth flows, the actual implementation
+is in github.com/myorg/services/auth-platform. The main app
+only consumes its API. JWT signing keys are in 1Password
+under 'auth-platform-prod-keys'." \
+  --tags "auth,architecture"
 ```
 
 > ✅ **Later:** asking "how does login work?" makes Claude direct you to the right repo and read code from there, instead of grep'ing the wrong codebase.
@@ -197,17 +220,27 @@ tags: [auth, architecture]
 
 ### 📝 Note — operational knowledge
 
-> 💬 **You say:** *"Document the deploy procedure: merge to main → staging deploys → run smoke-test.sh → tag `release-YYYY-MM-DD` → prod deploys → watch grafana for 10 min."*
+> 💬 **In a Claude session:** *"Document the deploy procedure: merge to main → staging deploys → run smoke-test.sh → tag `release-YYYY-MM-DD` → prod deploys → watch grafana for 10 min."*
 
-```yaml
-type: note
-name: deploy_workflow
-description: Production deploy procedure for this service
-tags: [deploy, ops, runbook]
-project: my-service
+📟 **Or directly from the terminal:**
+
+```bash
+memory add --type note --name deploy_workflow \
+  --description "Production deploy procedure for this service" \
+  --body "1. Merge to main triggers staging deploy automatically.
+2. Run ./scripts/smoke-test.sh against staging.
+3. Tag with 'release-YYYY-MM-DD' to trigger prod deploy.
+4. Watch grafana.internal/d/api-latency for 10 min after.
+5. Rollback: 'git revert' + new tag, never force-push." \
+  --tags "deploy,ops,runbook" \
+  --project my-service
 ```
 
-> ✅ **Later:** you say "deploy v1.4.2" and Claude walks you through *your* exact procedure, not a generic one. Plus you can pipe it: `memory get deploy_workflow --json | jq -r .body` for a printable runbook.
+> ✅ **Later:** you say "deploy v1.4.2" and Claude walks you through *your* exact procedure, not a generic one. Plus you can pipe the body for a printable runbook:
+>
+> ```bash
+> memory get deploy_workflow --json | jq -r .body
+> ```
 
 ---
 
