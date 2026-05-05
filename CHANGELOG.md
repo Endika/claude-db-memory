@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.2](https://github.com/Endika/claude-db-memory/compare/v0.3.1...v0.3.2) (2026-05-05)
+
+
+### Documentation
+
+* add 'When does this plugin make sense?' section with scaling table ([71ac819](https://github.com/Endika/claude-db-memory/commit/71ac8195881b1ad177ad7acdce350dd6bbe88167))
+* replace examples with realistic scenarios and visual flow ([e338bc7](https://github.com/Endika/claude-db-memory/commit/e338bc7d851187f5c8988f523958058ec87f9c9d))
+
 ## [0.3.1](https://github.com/Endika/claude-db-memory/compare/v0.3.0...v0.3.1) (2026-05-05)
 
 
