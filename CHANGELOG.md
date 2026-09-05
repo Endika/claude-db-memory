@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.4](https://github.com/Endika/claude-db-memory/compare/v0.3.3...v0.3.4) (2026-09-05)
+
+
+### Bug Fixes
+
+* pin mcp below 2 to keep the v1 FastMCP API ([20f9eb9](https://github.com/Endika/claude-db-memory/commit/20f9eb92ea48f0a6bf51c597bda8475836e59e1f))
+
 ## [0.3.3](https://github.com/Endika/claude-db-memory/compare/v0.3.2...v0.3.3) (2026-05-05)
 
 
