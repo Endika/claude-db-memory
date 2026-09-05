@@ -43,3 +43,13 @@ jobs:
       - run: pip install -e ".[dev]"
       - name: Pytest
         run: pytest -v
+
+  all-green:
+    name: all-green
+    needs: [lint, type-check, test]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: every required job must have succeeded
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped')
+        run: exit 1
