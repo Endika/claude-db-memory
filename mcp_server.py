@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 
 from claude_db_memory.operations import (
     add as add_op,
@@ -31,7 +31,7 @@ from claude_db_memory.operations import (
     verify as verify_op,
 )
 
-app = FastMCP("claude-db-memory")
+app = MCPServer("claude-db-memory")
 
 
 @app.tool()
