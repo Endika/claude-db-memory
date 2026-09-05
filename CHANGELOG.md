@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/Endika/claude-db-memory/compare/v0.3.4...v0.4.0) (2026-09-05)
+
+
+### Features
+
+* **mcp:** migrate server from FastMCP to MCPServer and unpin mcp 2.x ([9880e0f](https://github.com/Endika/claude-db-memory/commit/9880e0f28966ef02ef8624f61eed1f23e8cfd32d))
+
 ## [0.3.4](https://github.com/Endika/claude-db-memory/compare/v0.3.3...v0.3.4) (2026-09-05)
 
 
