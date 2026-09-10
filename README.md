@@ -29,8 +29,13 @@ If you have fewer than ~50 memories today and don't expect to grow, **the native
 ### As a Claude Code plugin
 
 ```bash
-/plugin install github:Endika/claude-db-memory
+claude plugin marketplace add Endika/claude-db-memory
+claude plugin install claude-db-memory@claude-db-memory
 ```
+
+Requires [uv](https://docs.astral.sh/uv/) on your `PATH`: the plugin starts the MCP server
+with `uv run --frozen`, which installs the pinned dependencies from `uv.lock` on first launch.
+Nothing is installed into your system Python.
 
 ### Manual
 

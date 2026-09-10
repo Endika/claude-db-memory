@@ -1,12 +1,18 @@
 {
   "name": "claude-db-memory",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "description": "SQLite-backed long-term memory for Claude Code with FTS5 search and Markdown backup",
   "license": "MIT",
   "mcpServers": {
     "claude-db-memory": {
-      "command": "python3",
-      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp_server.py"]
+      "command": "uv",
+      "args": [
+        "run",
+        "--frozen",
+        "--project",
+        "${CLAUDE_PLUGIN_ROOT}",
+        "${CLAUDE_PLUGIN_ROOT}/mcp_server.py"
+      ]
     }
   }
 }
