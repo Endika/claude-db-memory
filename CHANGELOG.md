@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/Endika/claude-db-memory/compare/v0.4.1...v0.4.2) (2026-09-10)
+
+
+### Bug Fixes
+
+* **mcp:** report the package version in the MCP handshake ([e49a42c](https://github.com/Endika/claude-db-memory/commit/e49a42ce1390397363686572c151c0e2b3e6ef6c))
+
 ## [0.4.1](https://github.com/Endika/claude-db-memory/compare/v0.4.0...v0.4.1) (2026-09-10)
 
 
