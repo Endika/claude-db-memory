@@ -6,6 +6,7 @@ from typing import Any
 
 from mcp.server.mcpserver import MCPServer
 
+from claude_db_memory import __version__
 from claude_db_memory.operations import (
     add as add_op,
 )
@@ -31,7 +32,7 @@ from claude_db_memory.operations import (
     verify as verify_op,
 )
 
-app = MCPServer("claude-db-memory")
+app = MCPServer("claude-db-memory", version=__version__)
 
 
 @app.tool()

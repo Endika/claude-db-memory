@@ -1,6 +1,8 @@
 import asyncio
 import importlib
 
+import claude_db_memory
+
 EXPECTED_TOOLS = {
     "tool_add_memory",
     "tool_search_memory",
@@ -11,6 +13,11 @@ EXPECTED_TOOLS = {
     "tool_reindex",
     "tool_verify",
 }
+
+
+def test_mcp_server_reports_the_package_version(memory_dir):
+    mod = importlib.import_module("mcp_server")
+    assert mod.app.version == claude_db_memory.__version__
 
 
 def test_mcp_server_registers_every_tool(memory_dir):
