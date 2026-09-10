@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/Endika/claude-db-memory/compare/v0.4.0...v0.4.1) (2026-09-10)
+
+
+### Bug Fixes
+
+* **plugin:** start the MCP server with uv and sync the manifest version ([2a5fc46](https://github.com/Endika/claude-db-memory/commit/2a5fc46b0de290831806ea87d64ba8299ae0401f))
+
 ## [0.4.0](https://github.com/Endika/claude-db-memory/compare/v0.3.4...v0.4.0) (2026-09-05)
 
 
