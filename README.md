@@ -37,7 +37,7 @@ If you have fewer than ~50 memories today and don't expect to grow, **the native
 ```bash
 git clone https://github.com/Endika/claude-db-memory ~/.claude/plugins/claude-db-memory
 cd ~/.claude/plugins/claude-db-memory
-pip install -e .
+uv sync
 ```
 
 Claude Code reads `.claude-plugin/plugin.json` and registers the MCP server automatically.
@@ -283,7 +283,7 @@ Override with `CLAUDE_DB_MEMORY_DIR=/path/to/dir` for a global memory shared acr
 ## Development
 
 ```bash
-make install        # pip install -e ".[dev]"
+make install        # uv sync --all-groups
 make check          # lint + type-check + tests
 make format         # auto-format (ruff)
 make test           # pytest only
