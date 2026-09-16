@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/Endika/claude-db-memory/compare/v0.4.2...v0.5.0) (2026-09-16)
+
+
+### Features
+
+* **ci:** block PRs that introduce high-severity dependency advisories ([48af0be](https://github.com/Endika/claude-db-memory/commit/48af0be186072e932d7c3edc39efbd6160ba24c5))
+
 ## [0.4.2](https://github.com/Endika/claude-db-memory/compare/v0.4.1...v0.4.2) (2026-09-10)
 
 
