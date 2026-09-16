@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/Endika/claude-db-memory/compare/v0.5.0...v0.6.0) (2026-09-16)
+
+
+### Features
+
+* **ci:** add CodeQL static analysis ([3f55325](https://github.com/Endika/claude-db-memory/commit/3f55325e8b728a09add89f2d101a154764123cc7))
+
 ## [0.5.0](https://github.com/Endika/claude-db-memory/compare/v0.4.2...v0.5.0) (2026-09-16)
 
 
