@@ -44,7 +44,7 @@ jobs:
         with:
           enable-cache: true
           python-version: ${{ matrix.python-version }}
-      - run: uv sync --all-groups --locked
+      - run: uv sync --all-groups
       - name: Pytest
         run: uv run pytest -v
 
