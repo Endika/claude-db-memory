@@ -14,7 +14,7 @@ jobs:
         with:
           enable-cache: true
           python-version: "3.11"
-      - run: uv sync --all-groups --frozen
+      - run: uv sync --all-groups --locked
       - name: Ruff lint
         run: uv run ruff check claude_db_memory tests mcp_server.py
       - name: Ruff format check
@@ -28,7 +28,7 @@ jobs:
         with:
           enable-cache: true
           python-version: "3.11"
-      - run: uv sync --all-groups --frozen
+      - run: uv sync --all-groups --locked
       - name: Mypy
         run: uv run mypy claude_db_memory mcp_server.py
 
@@ -44,7 +44,7 @@ jobs:
         with:
           enable-cache: true
           python-version: ${{ matrix.python-version }}
-      - run: uv sync --all-groups
+      - run: uv sync --all-groups --locked
       - name: Pytest
         run: uv run pytest -v
 
