@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.1](https://github.com/Endika/claude-db-memory/compare/v0.6.0...v0.6.1) (2026-09-27)
+
+
+### Documentation
+
+* correct the index truncation, CI jobs and release rules in README ([3c39e56](https://github.com/Endika/claude-db-memory/commit/3c39e56948be156f4b2acdfc88c19f3d8c406285))
+* remove internal planning docs ([9a9c832](https://github.com/Endika/claude-db-memory/commit/9a9c8327e218ed4b504dd25e42a72f369a1fff3c))
+
 ## [0.6.0](https://github.com/Endika/claude-db-memory/compare/v0.5.0...v0.6.0) (2026-09-16)
 
 
