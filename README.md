@@ -17,10 +17,10 @@ Not always. The plugin adds a small fixed cost per session (~600 tokens of MCP t
 | **1–20** | Works fine, `MEMORY.md` fits comfortably | Adds ~600 tokens of overhead per session | ❌ Overkill |
 | **20–80** | Still works, `MEMORY.md` getting long | Search + filters start adding value | 🟡 Break-even |
 | **80–200** | `MEMORY.md` near the auto-load limit | Compact auto-index, real search | ✅ Worth it |
-| **200+** | **Silently truncates** — memories beyond line 200 stop loading into context | No ceiling, FTS5 search, filters by type/project/tags | ✅ Strongly recommended |
+| **200+** | **Silently truncates** — memories beyond line 200 stop loading into context | No ceiling, FTS5 search, filters by type/project | ✅ Strongly recommended |
 | **1000+** | Catastrophic — most memories invisible to Claude | Same — query and retrieval scale to thousands | ✅ Required |
 
-The headline value isn't ahorro of tokens at small scale — it's **removing the silent truncation ceiling** of the native system. Once you cross ~200 lines in `MEMORY.md`, the native system stops loading the rest, and you don't get told. This plugin keeps every memory addressable forever, with full-text search.
+At small scale it adds tokens. What it's for is the **silent truncation ceiling** of the native system. Once you cross ~200 lines in `MEMORY.md`, the native system stops loading the rest, and you don't get told. The generated `MEMORY.md` is cut off at the same point, but every memory stays in SQLite and reachable through full-text search.
 
 If you have fewer than ~50 memories today and don't expect to grow, **the native system is fine** and you don't need this. Install it when (or just before) you cross 100.
 
@@ -127,8 +127,8 @@ sequenceDiagram
 | Without the plugin | With the plugin |
 |---|---|
 | You re-explain your repo conventions every session. | Claude knows them from memory and applies them automatically. |
-| `MEMORY.md` grows past 200 lines and silently truncates. | Index stays compact; full content always searchable. |
-| No way to filter "all feedback about testing". | `memory list --type feedback --tags testing`. |
+| `MEMORY.md` grows past 200 lines and silently truncates. | The index still truncates, but full content is always searchable. |
+| No way to filter "all feedback about testing". | `memory search testing --type feedback` (tags are full-text indexed). |
 | Cross-session continuity is lost when conversation history rotates. | Persistent context survives indefinitely. |
 | Knowledge lives in your head; new teammates can't import yours. | `.md` backups can be shared via git for team-wide context. |
 
@@ -241,7 +241,7 @@ memory add --type note --name deploy_workflow \
   --project my-service
 ```
 
-> ✅ **Later:** you say "deploy v1.4.2" and Claude walks you through *your* exact procedure, not a generic one. Plus you can pipe the body for a printable runbook:
+> ✅ **Later:** you say "deploy v1.4.2" and Claude walks you through *your* exact procedure. Plus you can pipe the body for a printable runbook:
 >
 > ```bash
 > memory get deploy_workflow --json | jq -r .body
@@ -251,7 +251,7 @@ memory add --type note --name deploy_workflow \
 
 ## What the auto-generated index looks like
 
-Every `add` / `update` / `delete` regenerates `MEMORY.md` (which Claude Code auto-loads at session start). It stays compact regardless of total memory count:
+Every `add` / `update` / `delete` regenerates `MEMORY.md` (which Claude Code auto-loads at session start):
 
 ```markdown
 # Memory Index
@@ -270,7 +270,7 @@ Every `add` / `update` / `delete` regenerates `MEMORY.md` (which Claude Code aut
 - [auth_service_location](memories/auth_service_location.md) — Auth lives in services/auth-platform, not the main app
 ```
 
-One line per memory, grouped by type. At 500 memories it's still ~510 lines instead of thousands — Claude Code auto-loads it without truncation, and the full body of each memory is fetched on demand via `tool_search_memory` or `tool_get_memory`.
+One line per memory, grouped by type, with no cap: at 500 memories it's over 500 lines, and Claude Code only auto-loads the first ~200. The full body of each memory is fetched on demand via `tool_search_memory` or `tool_get_memory`, so the ones past the cut are still reachable by search.
 
 ## Storage
 
@@ -306,16 +306,19 @@ This project uses [Release Please](https://github.com/googleapis/release-please)
 Conventional commit prefixes:
 - `feat:` -> minor version bump
 - `fix:` -> patch version bump
-- `feat!:` / `BREAKING CHANGE:` -> major version bump
-- `chore:`, `docs:`, `ci:`, `refactor:`, `test:` -> no version bump (still appear in changelog under their section)
+- `feat!:` / `BREAKING CHANGE:` -> major version bump (minor while the version is below 1.0.0)
+- `chore:`, `docs:`, `ci:`, `refactor:`, `test:` -> no version bump and no changelog entry
 
 ## Continuous integration
 
-GitHub Actions runs three parallel jobs on every push and PR:
+GitHub Actions runs these jobs in parallel on every PR and on pushes to `main`:
 
 - **lint** -- `ruff check` + `ruff format --check`
 - **type-check** -- `mypy`
 - **test** -- `pytest` on Python 3.10, 3.11, 3.12
+- **dependency-review** -- fails a PR that adds a high-severity advisory
+
+An **all-green** job fails unless all of them succeeded.
 
 ## License
 
